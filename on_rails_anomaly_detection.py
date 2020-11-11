@@ -20,11 +20,12 @@ def rails_area(img):
         area += cv2.contourArea(contour)
     return area
 
-def rails_anomaly(image,original):
+def rails_anomaly(image, original, railway_type):
     mask=rails_mask(image.copy())
     rails = cv2.bitwise_and(original.copy(), original.copy(), mask=mask)
     _, h, _ = rails.shape
-    if rails_area(rails[(h/2):h,:])<200000:
+    print(rails_area(rails[int(h/2):h,:]))
+    if rails_area(rails[int(h/2):h,:])<20000:
         return True
     else:
         return False

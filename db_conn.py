@@ -12,13 +12,13 @@ def db_connect():
         )
     return conn
 
-def insert_report(conn, filename, gps):
+def insert_report(conn, byte, gps, drone_id, rail_id, obstacle):
     cur = conn.cursor()
-    with open("makao.JPG", "rb") as image:
-        file = image.read()
-        byte = bytearray(file)
-    cur.execute('INSERT INTO public."Zgloszenia"("Zdjecie", "Data_zgloszenia", "Godz_zgloszenia", "Lokalizacja_gps", "Zarejestrowane", "Zgloszenie_sluzbom", id_drona, id_odcinka_trasy, id_trasy, id_uzytkownika, "Rodzaj_zagrozenia") VALUES(psycopg2.Binary(byte), datetime.now().date(), datetime.now().time(), gps, "false", "false", 1, 1, 1, NULL, 2);')
+    gps=12312312
+    cur.execute('INSERT INTO public."Zgloszenia"("Zdjecie", "Data_zgloszenia", "Godz_zgloszenia", "Lokalizacja_gps", id_drona, id_trasy, "Rodzaj_zagrozenia") VALUES (%s, %s, %s, %s, %s, %s, %s);',(psycopg2.Binary(byte), datetime.now().date(), datetime.now().time(), gps, drone_id, rail_id, obstacle))
+    conn.commit()
     cur.close()
+
 
 '''cur.execute('SELECT * FROM public."Obrazek";')
 photo=cur.fetchone()[1]
