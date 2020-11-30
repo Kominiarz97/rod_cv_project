@@ -9,7 +9,7 @@ def anomaly_classification(orginal_img):
         Wykrywanie i klasyfikacja zagrożeń
     """
 
-    CONFIDENCE = 0.3
+    CONFIDENCE = 0.2
     THRESHHOLD = 0.3
 
     # WSKAZANAIE ŚCIEŻEK DO PLIKÓW

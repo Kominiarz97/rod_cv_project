@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import imutils
 
 def detect_rails(edited, original):
     lines = cv2.HoughLinesP(edited, 1, np.pi/180, 80, minLineLength = 50, maxLineGap = 30)
@@ -28,6 +29,8 @@ def detect_rails(edited, original):
             #cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 50)
         xl, yl=draw_rails(original, l_x1 * ratio, (l_x2 * ratio) + 25, l_y1 * ratio, l_y2 * ratio)
         xr, yr=draw_rails(original, r_x1 * ratio, (r_x2 * ratio) - 25, r_y1 * ratio, r_y2 * ratio)
+        imagensy = imutils.resize(original, 400, 600)
+        cv2.imshow("3", imagensy)
     return l_x1, r_x1, xl, yl, xr, yr
 
 def draw_rails(img, x1, x2, y1, y2):
@@ -36,9 +39,9 @@ def draw_rails(img, x1, x2, y1, y2):
     if x1-x2<0:
         theta = np.arctan2(y1 - y2, x1 - x2)
     else:
-        theta = np.arctan2(y1 - y2, x1 - x2)
+        theta = np.arctan2(y1 - y2, x2 - x1)
     x = int(x1 - l * np.cos(theta))
     y = int(y1 - l * np.sin(theta))
-    cv2.line(img, (x1, h), (x, y), (255,0,0), 120)
-    return x,y
+    cv2.line(img, (x1, h), (x, y), (255,0,0), 5)
+    return x, y
 

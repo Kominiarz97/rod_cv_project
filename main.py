@@ -29,6 +29,7 @@ if input("Video(1) Zdjecie(2): ") == '1':
             rails_org = frame.copy()
 
             l_x1, r_x1, xl, yl, xr, yr = detect_rails(edited, rails_org)
+
             if(rails_anomaly(rails_org, original, 1)):
                 img_yolo = anomaly_classification(original.copy())
                 cv2.putText(img_yolo, "Wykryto anomalie", (60, 400), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2,
@@ -45,25 +46,28 @@ if input("Video(1) Zdjecie(2): ") == '1':
 
 else:
     nr = input("Numer zdjecia (1-5): ")
+
     frame = cv2.imread(f"media/{nr}.JPG")
 
     original = frame.copy()
     edited, resized = edit_image(original)
     rails_org = frame.copy()
-
-    l_x1, r_x1, xl, yl, xr, yr = detect_rails(edited, rails_org)
-    if (rails_anomaly(rails_org, original, 1)):
-        img_yolo = anomaly_classification(original.copy())
-        cv2.putText(img_yolo, "Wykryto anomalie", (60, 400), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2,
-                    cv2.LINE_AA)
-        cv2.imshow('YOLO', img_yolo)
-        cv2.imwrite(f"report_photos/{drone_id}_{reports}.jpg", img_yolo)
-        report_obstacle(conn,drone_id, reports, 3)
-        reports += 1
-    else:
-        cv2.imshow('YOLO', resized)
-    # rails = downsize(rails_org)
-    print('Aby wylaczyc wciśnij "q" ')
-    if cv2.waitKey(0) & 0xFF == ord('q'):
-        cv2.destroyAllWindows()
+    try:
+        l_x1, r_x1, xl, yl, xr, yr = detect_rails(edited, rails_org)
+        if (rails_anomaly(rails_org, original, 1)):
+            img_yolo = anomaly_classification(original.copy())
+            cv2.putText(img_yolo, "Wykryto anomalie", (60, 400), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2,
+                        cv2.LINE_AA)
+            cv2.imshow('YOLO', img_yolo)
+            cv2.imwrite(f"report_photos/{drone_id}_{reports}.jpg", img_yolo)
+            report_obstacle(conn,drone_id, reports, 3)
+            reports += 1
+        else:
+            cv2.imshow('YOLO', resized)
+        # rails = downsize(rails_org)
+        print('Aby wylaczyc wciśnij "q" ')
+        if cv2.waitKey(0) & 0xFF == ord('q'):
+            cv2.destroyAllWindows()
+    except:
+        print("Nie wykryte tory")
 conn.close()
