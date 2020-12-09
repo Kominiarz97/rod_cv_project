@@ -4,11 +4,11 @@ import cv2
 
 def db_connect():
     conn = psycopg2.connect(
-        user='cxsmexgltcamdl',
-        password='26451c9c964f41c1289ad0560b6c19822790f9eac333858ff4ed29be2db71b04',
-        host='ec2-54-247-122-209.eu-west-1.compute.amazonaws.com',
-        port='5432',
-        database='d83erikgcdpmpu',
+        user='xxx',
+        password='xxx',
+        host='xxx',
+        port='xxx',
+        database='xxx',
         )
     return conn
 
