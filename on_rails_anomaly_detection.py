@@ -9,6 +9,7 @@ def rails_mask(image):
     mask = cv2.inRange(hsv_image, lower_blue, upper_blue)
     return mask
 
+
 def rails_area(img):
     area = 0.0
     hsv_img_crop = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -20,15 +21,13 @@ def rails_area(img):
         area += cv2.contourArea(contour)
     return area
 
-def rails_anomaly(image, original, railway_type):
-    mask=rails_mask(image.copy())
+
+def rails_anomaly(image, original):
+    mask = rails_mask(image.copy())
     rails = cv2.bitwise_and(original.copy(), original.copy(), mask=mask)
     _, h, _ = rails.shape
-    print(rails_area(rails[int(h/2):h,:]))
-    if rails_area(rails[int(h/2):h,:])<20000:
+    print(rails_area(rails[int(h / 2):h, :]))
+    if rails_area(rails[int(h / 2):h, :]) < 20000:
         return True
     else:
         return False
-
-
-

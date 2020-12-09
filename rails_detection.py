@@ -4,44 +4,51 @@ import imutils
 
 def detect_rails(edited, original):
     lines = cv2.HoughLinesP(edited, 1, np.pi/180, 80, minLineLength = 50, maxLineGap = 30)
-    _, h, w = original.shape
+    h, w, _ = original.shape
     ratio = int(h/600)
+    print(f'h: {h} w: {w} ratio: {ratio}')
     l_x1 = 200
     r_x1 = 0
     if lines is not None:
         for line in lines:
             x1, y1, x2, y2 = line[0]
-            if x1 < l_x1 and y1>550:
-                l_x1 = x1
-                l_x2 = x2
-                l_y1 = y1
-                l_y2 = y2
-            if x1 > r_x1 and y1>550:
-                r_x1 = x1
-                r_x2 = x2
-                r_y1 = y1
-                r_y2 = y2
-            if x2 > r_x1 and y2>550:
-                r_x1 = x2
-                r_x2 = x1
-                r_y1 = y2
-                r_y2 = y1
-            #cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 50)
-        xl, yl=draw_rails(original, l_x1 * ratio, (l_x2 * ratio) + 25, l_y1 * ratio, l_y2 * ratio)
-        xr, yr=draw_rails(original, r_x1 * ratio, (r_x2 * ratio) - 25, r_y1 * ratio, r_y2 * ratio)
-        imagensy = imutils.resize(original, 400, 600)
-        cv2.imshow("3", imagensy)
-    return l_x1, r_x1, xl, yl, xr, yr
+            if x2 - x1 < 80:
+                if x1 < l_x1 and y1>550:
+                    l_x1, l_y1, l_x2, l_y2 = line[0]
+                if x1 > r_x1 and y1>550:
+                    r_x1, r_y1, r_x2, r_y2 = line[0]
+                if x2 > r_x1 and y2>550:
+                    r_x2, r_y2, r_x1, r_y1 = line[0]
+        xl, yl = draw_rails(original, l_x1 * ratio, (l_x2 * ratio) + 25, l_y1 * ratio, l_y2 * ratio, 120)
+        xr, yr = draw_rails(original, r_x1 * ratio, (r_x2 * ratio) - 25, r_y1 * ratio, r_y2 * ratio, 120)
+    qwe = imutils.resize(original, 400, 600)
+    cv2.imshow("zxc", qwe)
+    return l_x1 * ratio, r_x1 * ratio, xl, yl, xr, yr
+
+
+def draw_rails(img, x1, x2, y1, y2, thickness):
+    h, _, _=img.shape
+    l = int(h/2)
+    theta = np.arctan2(y1 - y2, x1 - x2)
+    x = int(x1 - l * np.cos(theta))
+    y = int(y1 - l * np.sin(theta))
+    cv2.line(img, (x1, h), (x, y), (255,0,0), thickness)
+    return x, y
+
+'''img_1=orginal.copy()
+        xl, yl=draw_rails(orginal, l_x1 * 10, (l_x2 * 10) + 25, l_y1 * 10, l_y2 * 10)
+        xr, yr=draw_rails(orginal, r_x1 * 10, (r_x2 * 10) - 25, r_y1 * 10, r_y2 * 10)
+        draw_rectangles(img_1, l_x1 * 10, (l_x2 * 10) + 25, l_y1 * 10, l_y2 * 10)
+        draw_rectangles(img_1, r_x1 * 10, (r_x2 * 10) - 25, r_y1 * 10, r_y2 * 10)
+    return img_1, l_x1, r_x1, xl, yl, xr, yr
 
 def draw_rails(img, x1, x2, y1, y2):
     h,_,_=img.shape
-    l = int(h/2)
     if x1-x2<0:
         theta = np.arctan2(y1 - y2, x1 - x2)
     else:
-        theta = np.arctan2(y1 - y2, x2 - x1)
-    x = int(x1 - l * np.cos(theta))
-    y = int(y1 - l * np.sin(theta))
-    cv2.line(img, (x1, h), (x, y), (255,0,0), 5)
-    return x, y
-
+        theta = np.arctan2(y1 - y2, x1 - x2)
+    x = int(x1 - 5000 * np.cos(theta))
+    y = int(y1 - 5000 * np.sin(theta))
+    cv2.line(img, (x1, h), (x, y), (255,0,0), 120)
+    return x,y'''
