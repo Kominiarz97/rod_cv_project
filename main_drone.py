@@ -7,9 +7,11 @@ from rails_detection import detect_rails
 from image_operations import edit_simple, edit_image
 from on_rails_anomaly_detection import  rails_anomaly
 from between_rails_anomaly_detection import between_rails_anomaly
-conn = None
+
 reports = 0
 drone_id = 1
+
+conn = None
 try: #próba połączenia z bazą danych
     while conn == None:
         try:
