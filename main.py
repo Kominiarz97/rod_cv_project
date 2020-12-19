@@ -8,9 +8,10 @@ from image_operations import edit_simple, edit_image
 from on_rails_anomaly_detection import rails_anomaly
 from between_rails_anomaly_detection import between_rails_anomaly
 
-conn = None
 reports = 0
 drone_id = 1
+
+conn = None
 try:
     while conn is None:
         try:
@@ -39,8 +40,7 @@ except UnboundLocalError:
         pass
 
 if rails_detected:
-    between_rails_anomaly(original, l_x1, xl, r_x1, xr)
-    if rails_anomaly(rails_org, original):
+    if rails_anomaly(rails_org, original) or between_rails_anomaly(original, l_x1, xl, r_x1, xr):
         img_yolo = anomaly_classification(original.copy())
         cv2.imwrite(f"report_photos/{drone_id}_{reports}.jpg", img_yolo)
         report_obstacle(conn, drone_id, reports, 3)

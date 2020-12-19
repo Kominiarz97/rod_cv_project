@@ -2,36 +2,36 @@ import cv2
 import numpy as np
 import imutils
 
-def detect_rails(edited, original):
-    lines = cv2.HoughLinesP(edited, 1, np.pi/180, 80, minLineLength = 50, maxLineGap = 30)
-    h, w, _ = original.shape
+def detect_rails(edited, original): #funkcja przyjmuje jako parametry przetworzony obraz, oraz oryginalny obraz
+    lines = cv2.HoughLinesP(edited, 1, np.pi/180, 80, minLineLength = 50, maxLineGap = 30)#detekcja linii prostych
+    h, w, _ = original.shape #odczytanie wymiarów obrazu wejściowego
     ratio = int(h/600)
-    print(f'h: {h} w: {w} ratio: {ratio}')
-    l_x1 = 200
+    l_x1 = int(w/2) #wydzielenie środka obrazu
     r_x1 = 0
     if lines is not None:
         for line in lines:
             x1, y1, x2, y2 = line[0]
-            if x2 - x1 < 80:
-                if x1 < l_x1 and y1>550:
+            if x2 - x1 < 80: #ograniczenie do linii pionowych i z niewielką odchyłką
+                if x1 < l_x1 and y1>550: #detekcja lewej szyny
                     l_x1, l_y1, l_x2, l_y2 = line[0]
-                if x1 > r_x1 and y1>550:
+                if x1 > r_x1 and y1>550:#detekcja prawej szyny
                     r_x1, r_y1, r_x2, r_y2 = line[0]
                 if x2 > r_x1 and y2>550:
                     r_x2, r_y2, r_x1, r_y1 = line[0]
+        # rysowanie linii szyn
         xl, yl = draw_rails(original, l_x1 * ratio, (l_x2 * ratio) + 25, l_y1 * ratio, l_y2 * ratio, 120)
         xr, yr = draw_rails(original, r_x1 * ratio, (r_x2 * ratio) - 25, r_y1 * ratio, r_y2 * ratio, 120)
-    qwe = imutils.resize(original, 400, 600)
-    cv2.imshow("zxc", qwe)
-    return l_x1 * ratio, r_x1 * ratio, xl, yl, xr, yr
+    return l_x1 * ratio, r_x1 * ratio, xl, yl, xr, yr #funkcja zwraca położenie szyn
 
 
 def draw_rails(img, x1, x2, y1, y2, thickness):
     h, _, _=img.shape
     l = int(h/2)
+    #obliczenie kąta szyn
     theta = np.arctan2(y1 - y2, x1 - x2)
     x = int(x1 - l * np.cos(theta))
     y = int(y1 - l * np.sin(theta))
+    #rysowanie linii wzdłuż szyn
     cv2.line(img, (x1, h), (x, y), (255,0,0), thickness)
     return x, y
 
